@@ -43,9 +43,15 @@ Fixed at 320×440. `FixedSizeHostingController` + deferred `window.minSize = win
 ### Menubar icon
 Custom PNG asset in `Assets.xcassets/MenuBarIcon.imageset` (1x/2x/3x, template image). Set `isTemplate = true` so the system colours it for light/dark mode and menubar highlight.
 
-## Project generation
+## Project generation and building
 
 Uses **xcodegen**. Run `xcodegen` after adding new `.swift` files or assets — the `.xcodeproj` is not committed (listed in `.gitignore`).
+
+Always build at the end of every change session:
+```
+xcodebuild -scheme ForgottenPlugins -configuration Debug build
+```
+Do not report work as done without a successful build. Do not launch or kill the app — leave that to the user.
 
 ## Deployment target
 

@@ -27,17 +27,20 @@ class MenuBarController: NSObject {
     }
 
     private func makeMenuBarIcon() -> NSImage {
-        let size = NSSize(width: 22, height: 16)
+        let size = NSSize(width: 26, height: 18)
         let result = NSImage(size: size, flipped: false) { _ in
-            let brainCfg = NSImage.SymbolConfiguration(pointSize: 12, weight: .light)
-            let noteCfg  = NSImage.SymbolConfiguration(pointSize: 7,  weight: .semibold)
+            // Brain as a thin outline so the note on top remains distinct
+            let brainCfg = NSImage.SymbolConfiguration(pointSize: 16, weight: .ultraLight)
+            // Note at medium weight so it reads as a solid shape over the brain
+            let noteCfg  = NSImage.SymbolConfiguration(pointSize: 13, weight: .medium)
             if let brain = NSImage(systemSymbolName: "brain", accessibilityDescription: nil)?
                     .withSymbolConfiguration(brainCfg) {
-                brain.draw(in: NSRect(x: 0, y: 1, width: 16, height: 14))
+                brain.draw(in: NSRect(x: 0, y: 1, width: 26, height: 16))
             }
             if let note = NSImage(systemSymbolName: "music.note", accessibilityDescription: nil)?
                     .withSymbolConfiguration(noteCfg) {
-                note.draw(in: NSRect(x: 14, y: 9, width: 8, height: 7))
+                // Centre the note over the brain
+                note.draw(in: NSRect(x: 8, y: 2, width: 10, height: 14))
             }
             return true
         }

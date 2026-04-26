@@ -75,6 +75,12 @@ AU analysers (spectrum analysers, meters, scopes) register as the `aufx` (Effect
 
 MIDI effects and analysers are folded into **Effect** in the shared taxonomy.
 
+## Dismissing plugins
+
+Each plugin row has an **×** button that dismisses the plugin, hiding it from the list. Dismissal is not permanent: if you genuinely use the plugin again (i.e. a DAW loads it and atime advances past mtime by the required margin), it will automatically reappear the next time the list is refreshed.
+
+To restore all dismissed plugins at once without waiting for usage events, right-click the menubar icon and choose **Reset All Dismissals**.
+
 ## Privacy
 
 All data stays on your machine. No network requests are made.

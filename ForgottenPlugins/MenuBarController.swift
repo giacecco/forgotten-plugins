@@ -66,10 +66,18 @@ class MenuBarController: NSObject {
 
     private func showContextMenu() {
         let menu = NSMenu()
+        let reset = NSMenuItem(title: "Reset All Dismissals", action: #selector(resetAllDismissals), keyEquivalent: "")
+        reset.target = self
+        menu.addItem(reset)
+        menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: "Quit Forgotten Plugins", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         statusItem.menu = menu
         statusItem.button?.performClick(nil)
         statusItem.menu = nil
+    }
+
+    @objc private func resetAllDismissals() {
+        store.resetAllDismissals()
     }
 
     private func showPopover() {

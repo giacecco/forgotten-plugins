@@ -38,6 +38,7 @@ class PluginStore: ObservableObject {
                 if !isRescan && PluginScanner.isGenuineUsage(atime: s.atime, mtime: s.mtime) {
                     if known.lastConfirmedUsedAt.map({ s.atime > $0 }) ?? true {
                         known.lastConfirmedUsedAt = s.atime
+                        known.isDismissed = false
                     }
                 }
                 byPath[s.path] = known
@@ -60,6 +61,11 @@ class PluginStore: ObservableObject {
         }
 
         plugins = Array(byPath.values).sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
+        save()
+    }
+
+    func resetAllDismissals() {
+        for i in plugins.indices { plugins[i].isDismissed = false }
         save()
     }
 

@@ -18,6 +18,9 @@ xcuserdata/
 DerivedData/
 .build/
 
+# Secrets
+.env
+
 # xcodegen
 # project.pbxproj is generated — commit project.yml instead
 *.xcodeproj/project.pbxproj

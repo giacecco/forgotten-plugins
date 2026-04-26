@@ -64,6 +64,23 @@ class PluginStore: ObservableObject {
 
         plugins = Array(byPath.values).sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
         save()
+        resolveUnknownManufacturers()
+    }
+
+    private func resolveUnknownManufacturers() {
+        let unknown = Array(Set(plugins.filter { $0.manufacturer == nil }.map(\.name)))
+        guard !unknown.isEmpty else { return }
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            let resolved = await AnthropicClient.resolveManufacturers(for: unknown)
+            guard !resolved.isEmpty else { return }
+            for i in self.plugins.indices {
+                if let m = resolved[self.plugins[i].name] {
+                    self.plugins[i].manufacturer = m
+                }
+            }
+            self.save()
+        }
     }
 
     func resetAllDismissals() {

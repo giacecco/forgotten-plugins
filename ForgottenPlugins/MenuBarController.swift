@@ -19,46 +19,13 @@ class MenuBarController: NSObject {
     private func setupStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         guard let button = statusItem.button else { return }
-        button.image = makeMenuBarIcon()
+        button.image = NSImage(named: "MenuBarIcon")
         button.action = #selector(handleClick)
         button.target = self
         button.sendAction(on: [.leftMouseUp, .rightMouseDown])
         addHoverTracking(to: button)
     }
 
-    private func makeMenuBarIcon() -> NSImage {
-        let size = NSSize(width: 26, height: 18)
-        let noteRect = NSRect(x: 8, y: 2, width: 10, height: 14)
-        // Asymmetric halo: music.note glyph sits towards the right of its bounds,
-        // so expand more on the right to get an even gap all around the note.
-        let haloRect = NSRect(x: noteRect.minX - 7, y: noteRect.minY - 7,
-                              width: noteRect.width + 7 + 12, height: noteRect.height + 14)
-
-        let result = NSImage(size: size, flipped: false) { _ in
-            let brainCfg = NSImage.SymbolConfiguration(pointSize: 16, weight: .regular)
-            let haloCfg  = NSImage.SymbolConfiguration(pointSize: 15, weight: .black)
-            let noteCfg  = NSImage.SymbolConfiguration(pointSize: 13, weight: .bold)
-
-            // 1. Draw brain
-            if let brain = NSImage(systemSymbolName: "brain.fill", accessibilityDescription: nil)?
-                    .withSymbolConfiguration(brainCfg) {
-                brain.draw(in: NSRect(x: 0, y: 1, width: 26, height: 16))
-            }
-            // 2. Punch the note's silhouette (slightly enlarged) out of the brain
-            if let halo = NSImage(systemSymbolName: "music.note", accessibilityDescription: nil)?
-                    .withSymbolConfiguration(haloCfg) {
-                halo.draw(in: haloRect, from: .zero, operation: .destinationOut, fraction: 1)
-            }
-            // 3. Draw the actual note on top
-            if let note = NSImage(systemSymbolName: "music.note", accessibilityDescription: nil)?
-                    .withSymbolConfiguration(noteCfg) {
-                note.draw(in: noteRect, from: .zero, operation: .sourceOver, fraction: 1)
-            }
-            return true
-        }
-        result.isTemplate = true
-        return result
-    }
 
     private func addHoverTracking(to button: NSStatusBarButton) {
         let area = NSTrackingArea(

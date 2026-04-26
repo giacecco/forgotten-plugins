@@ -83,7 +83,8 @@ class PluginStore: ObservableObject {
     // disabled format does not silently suppress a suggestion for an enabled one.
     func forgottenPlugins(
         for enabledFormats: Set<PluginFormat>,
-        categories enabledCategories: Set<PluginCategory>
+        categories enabledCategories: Set<PluginCategory>,
+        thresholdDays: Int
     ) -> [ForgottenPlugin] {
         let relevant = plugins.filter {
             !$0.isDismissed &&
@@ -91,8 +92,12 @@ class PluginStore: ObservableObject {
             enabledCategories.contains($0.category)
         }
         let grouped = Dictionary(grouping: relevant) { $0.name.lowercased() }
-        return grouped.map { key, group -> ForgottenPlugin in
+        return grouped.compactMap { key, group -> ForgottenPlugin? in
             let maxUsed = group.compactMap(\.lastConfirmedUsedAt).max()
+            let days = maxUsed.map {
+                Calendar.current.dateComponents([.day], from: $0, to: Date()).day ?? 0
+            } ?? Int.max
+            guard days >= thresholdDays else { return nil }
             let formats = Array(Set(group.map(\.format))).sorted { $0.rawValue < $1.rawValue }
             let category = group.first(where: { $0.category != .unknown })?.category ?? .unknown
             return ForgottenPlugin(

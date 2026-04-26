@@ -75,6 +75,25 @@ struct PopoverView: View {
             toggleFor("Hide never used", isOn: preferences.hideNeverUsed) {
                 preferences.hideNeverUsed = $0
             }
+            Divider()
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Threshold")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                HStack(spacing: 4) {
+                    TextField("", value: $preferences.forgottenThresholdDays, formatter: {
+                        let f = NumberFormatter()
+                        f.minimum = 1
+                        f.allowsFloats = false
+                        return f
+                    }())
+                    .textFieldStyle(.roundedBorder)
+                    .frame(width: 48)
+                    Text("days without use")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
@@ -149,7 +168,7 @@ struct PopoverView: View {
     }
 
     private var visibleForgottenPlugins: [ForgottenPlugin] {
-        var result = store.forgottenPlugins(for: preferences.enabledFormats, categories: preferences.enabledCategories)
+        var result = store.forgottenPlugins(for: preferences.enabledFormats, categories: preferences.enabledCategories, thresholdDays: preferences.forgottenThresholdDays)
         if preferences.hideNeverUsed {
             result = result.filter { $0.lastConfirmedUsedAt != nil }
         }

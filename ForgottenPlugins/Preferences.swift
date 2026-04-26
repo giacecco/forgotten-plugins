@@ -13,6 +13,10 @@ class Preferences: ObservableObject {
         didSet { save() }
     }
 
+    @Published var forgottenThresholdDays: Int {
+        didSet { save() }
+    }
+
     private let defaults = UserDefaults.standard
 
     init() {
@@ -29,11 +33,14 @@ class Preferences: ObservableObject {
         }
 
         hideNeverUsed = defaults.bool(forKey: "hideNeverUsed")
+        let saved = defaults.integer(forKey: "forgottenThresholdDays")
+        forgottenThresholdDays = saved > 0 ? saved : 90
     }
 
     private func save() {
         defaults.set(enabledFormats.map(\.rawValue),    forKey: "enabledFormats")
         defaults.set(enabledCategories.map(\.rawValue), forKey: "enabledCategories")
         defaults.set(hideNeverUsed,                     forKey: "hideNeverUsed")
+        defaults.set(forgottenThresholdDays,            forKey: "forgottenThresholdDays")
     }
 }

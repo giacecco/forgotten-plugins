@@ -15,6 +15,7 @@ struct Plugin: Codable, Identifiable {
     var format: PluginFormat
     var category: PluginCategory
     var manufacturer: String?
+    var productURL: String?
     var firstSeenAt: Date
     var lastModifiedAt: Date
     var lastAccessedAt: Date
@@ -30,6 +31,7 @@ struct Plugin: Codable, Identifiable {
         format              = try c.decode(PluginFormat.self,  forKey: .format)
         category            = try c.decodeIfPresent(PluginCategory.self, forKey: .category) ?? .unknown
         manufacturer        = try c.decodeIfPresent(String.self,        forKey: .manufacturer)
+        productURL          = try c.decodeIfPresent(String.self,        forKey: .productURL)
         firstSeenAt         = try c.decode(Date.self,          forKey: .firstSeenAt)
         lastModifiedAt      = try c.decode(Date.self,          forKey: .lastModifiedAt)
         lastAccessedAt      = try c.decode(Date.self,          forKey: .lastAccessedAt)
@@ -38,14 +40,15 @@ struct Plugin: Codable, Identifiable {
     }
 
     init(id: UUID, path: String, name: String, format: PluginFormat, category: PluginCategory,
-         manufacturer: String?, firstSeenAt: Date, lastModifiedAt: Date, lastAccessedAt: Date,
-         lastConfirmedUsedAt: Date?, isDismissed: Bool) {
+         manufacturer: String?, productURL: String?, firstSeenAt: Date, lastModifiedAt: Date,
+         lastAccessedAt: Date, lastConfirmedUsedAt: Date?, isDismissed: Bool) {
         self.id                  = id
         self.path                = path
         self.name                = name
         self.format              = format
         self.category            = category
         self.manufacturer        = manufacturer
+        self.productURL          = productURL
         self.firstSeenAt         = firstSeenAt
         self.lastModifiedAt      = lastModifiedAt
         self.lastAccessedAt      = lastAccessedAt
@@ -61,6 +64,7 @@ struct ForgottenPlugin: Identifiable {
     let formats: [PluginFormat]     // sorted, all formats found for this name
     let category: PluginCategory
     let manufacturer: String?
+    let productURL: String?
     let lastConfirmedUsedAt: Date?  // max across all enabled formats
 
     var daysSinceLastUse: Int? {

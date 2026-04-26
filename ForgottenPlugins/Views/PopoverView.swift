@@ -163,9 +163,11 @@ struct PopoverView: View {
         ScrollView {
             LazyVStack(spacing: 0) {
                 ForEach(visibleForgottenPlugins) { plugin in
-                    PluginRowView(plugin: plugin) {
+                    PluginRowView(plugin: plugin, onDismiss: {
                         store.dismiss(plugin)
-                    }
+                    }, onTap: {
+                        store.openURL(for: plugin)
+                    })
                     Divider()
                         .padding(.leading, 14)
                 }
@@ -186,6 +188,7 @@ struct PopoverView: View {
 struct PluginRowView: View {
     let plugin: ForgottenPlugin
     let onDismiss: () -> Void
+    let onTap: () -> Void
 
     var body: some View {
         HStack(spacing: 10) {
@@ -214,9 +217,7 @@ struct PluginRowView: View {
                 }
             }
             .contentShape(Rectangle())
-            .onTapGesture {
-                if let url = searchURL { NSWorkspace.shared.open(url) }
-            }
+            .onTapGesture { onTap() }
             .onHover { over in
                 if over { NSCursor.pointingHand.push() } else { NSCursor.pop() }
             }
@@ -231,13 +232,6 @@ struct PluginRowView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 9)
-    }
-
-    private var searchURL: URL? {
-        let query = plugin.manufacturer.map { "\($0) \(plugin.name)" } ?? "\(plugin.name) audio plugin"
-        var components = URLComponents(string: "https://www.google.com/search")
-        components?.queryItems = [URLQueryItem(name: "q", value: query)]
-        return components?.url
     }
 
     private var lastUsedLabel: String {

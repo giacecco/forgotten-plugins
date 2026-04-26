@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 
 class PluginStore: ObservableObject {
@@ -53,6 +54,7 @@ class PluginStore: ObservableObject {
                     format: s.format,
                     category: s.category,
                     manufacturer: s.manufacturer,
+                    productURL: nil,
                     firstSeenAt: now,
                     lastModifiedAt: s.mtime,
                     lastAccessedAt: s.atime,
@@ -98,6 +100,33 @@ class PluginStore: ObservableObject {
         }
     }
 
+    func openURL(for forgotten: ForgottenPlugin) {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            // Use cached URL if available
+            if let urlString = forgotten.productURL, let url = URL(string: urlString) {
+                NSWorkspace.shared.open(url)
+                return
+            }
+            // Ask Claude for the product page
+            if let url = await AnthropicClient.resolveProductURL(
+                name: forgotten.name, manufacturer: forgotten.manufacturer) {
+                for i in self.plugins.indices where self.plugins[i].name.lowercased() == forgotten.id {
+                    self.plugins[i].productURL = url.absoluteString
+                }
+                self.save()
+                NSWorkspace.shared.open(url)
+                return
+            }
+            // Fall back to a Google search
+            let query = forgotten.manufacturer.map { "\($0) \(forgotten.name)" }
+                ?? "\(forgotten.name) audio plugin"
+            var components = URLComponents(string: "https://www.google.com/search")
+            components?.queryItems = [URLQueryItem(name: "q", value: query)]
+            if let url = components?.url { NSWorkspace.shared.open(url) }
+        }
+    }
+
     func resetAllDismissals() {
         for i in plugins.indices { plugins[i].isDismissed = false }
         save()
@@ -136,15 +165,16 @@ class PluginStore: ObservableObject {
             let category = group.first(where: { $0.category != .unknown })?.category ?? .unknown
             // Look across all formats (not just enabled) so a disabled format can still
             // supply the manufacturer name.
-            let manufacturer = plugins
-                .filter { $0.name.lowercased() == key }
-                .compactMap(\.manufacturer).first
+            let allFormats = plugins.filter { $0.name.lowercased() == key }
+            let manufacturer = allFormats.compactMap(\.manufacturer).first
+            let productURL   = allFormats.compactMap(\.productURL).first
             return ForgottenPlugin(
                 id: key,
                 name: group.first!.name,
                 formats: formats,
                 category: category,
                 manufacturer: manufacturer,
+                productURL: productURL,
                 lastConfirmedUsedAt: maxUsed
             )
         }

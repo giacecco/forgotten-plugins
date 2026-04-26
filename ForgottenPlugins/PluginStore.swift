@@ -107,7 +107,12 @@ class PluginStore: ObservableObject {
                 lastConfirmedUsedAt: maxUsed
             )
         }
-        .sorted { ($0.lastConfirmedUsedAt ?? .distantPast) < ($1.lastConfirmedUsedAt ?? .distantPast) }
+        .sorted {
+            let d0 = $0.lastConfirmedUsedAt ?? .distantPast
+            let d1 = $1.lastConfirmedUsedAt ?? .distantPast
+            if d0 != d1 { return d0 < d1 }
+            return $0.name.localizedCompare($1.name) == .orderedAscending
+        }
     }
 
     // Sliding-window scan: if 10+ plugins have atimes within the same 30-second

@@ -213,6 +213,13 @@ struct PluginRowView: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if let url = searchURL { NSWorkspace.shared.open(url) }
+            }
+            .onHover { over in
+                if over { NSCursor.pointingHand.push() } else { NSCursor.pop() }
+            }
             Spacer()
             Button(action: onDismiss) {
                 Image(systemName: "xmark")
@@ -224,6 +231,13 @@ struct PluginRowView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 9)
+    }
+
+    private var searchURL: URL? {
+        let query = plugin.manufacturer.map { "\($0) \(plugin.name)" } ?? "\(plugin.name) audio plugin"
+        var components = URLComponents(string: "https://www.google.com/search")
+        components?.queryItems = [URLQueryItem(name: "q", value: query)]
+        return components?.url
     }
 
     private var lastUsedLabel: String {

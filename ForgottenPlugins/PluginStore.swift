@@ -119,7 +119,11 @@ class PluginStore: ObservableObject {
             guard days >= thresholdDays else { return nil }
             let formats = Array(Set(group.map(\.format))).sorted { $0.rawValue < $1.rawValue }
             let category = group.first(where: { $0.category != .unknown })?.category ?? .unknown
-            let manufacturer = group.compactMap(\.manufacturer).first
+            // Look across all formats (not just enabled) so a disabled format can still
+            // supply the manufacturer name.
+            let manufacturer = plugins
+                .filter { $0.name.lowercased() == key }
+                .compactMap(\.manufacturer).first
             return ForgottenPlugin(
                 id: key,
                 name: group.first!.name,

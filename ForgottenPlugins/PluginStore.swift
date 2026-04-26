@@ -63,8 +63,23 @@ class PluginStore: ObservableObject {
         }
 
         plugins = Array(byPath.values).sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
+        propagateManufacturers()
         save()
         resolveUnknownManufacturers()
+    }
+
+    // If any format of a plugin has a manufacturer, copy it to the other formats.
+    private func propagateManufacturers() {
+        let knownByName = Dictionary(
+            plugins.compactMap { p -> (String, String)? in
+                guard let m = p.manufacturer else { return nil }
+                return (p.name.lowercased(), m)
+            },
+            uniquingKeysWith: { first, _ in first }
+        )
+        for i in plugins.indices where plugins[i].manufacturer == nil {
+            plugins[i].manufacturer = knownByName[plugins[i].name.lowercased()]
+        }
     }
 
     private func resolveUnknownManufacturers() {

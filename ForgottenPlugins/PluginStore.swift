@@ -30,6 +30,7 @@ class PluginStore: ObservableObject {
             let isRescan = rescanPaths.contains(s.path)
             if var known = byPath[s.path] {
                 known.category = s.category
+                known.manufacturer = s.manufacturer
                 if s.mtime > known.lastModifiedAt {
                     known.lastModifiedAt = s.mtime
                     known.lastConfirmedUsedAt = nil
@@ -51,6 +52,7 @@ class PluginStore: ObservableObject {
                     name: s.name,
                     format: s.format,
                     category: s.category,
+                    manufacturer: s.manufacturer,
                     firstSeenAt: now,
                     lastModifiedAt: s.mtime,
                     lastAccessedAt: s.atime,
@@ -100,11 +102,13 @@ class PluginStore: ObservableObject {
             guard days >= thresholdDays else { return nil }
             let formats = Array(Set(group.map(\.format))).sorted { $0.rawValue < $1.rawValue }
             let category = group.first(where: { $0.category != .unknown })?.category ?? .unknown
+            let manufacturer = group.compactMap(\.manufacturer).first
             return ForgottenPlugin(
                 id: key,
                 name: group.first!.name,
                 formats: formats,
                 category: category,
+                manufacturer: manufacturer,
                 lastConfirmedUsedAt: maxUsed
             )
         }

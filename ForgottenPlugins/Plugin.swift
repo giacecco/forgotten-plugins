@@ -14,6 +14,7 @@ struct Plugin: Codable, Identifiable {
     var name: String
     var format: PluginFormat
     var category: PluginCategory
+    var manufacturer: String?
     var firstSeenAt: Date
     var lastModifiedAt: Date
     var lastAccessedAt: Date
@@ -28,6 +29,7 @@ struct Plugin: Codable, Identifiable {
         name                = try c.decode(String.self,        forKey: .name)
         format              = try c.decode(PluginFormat.self,  forKey: .format)
         category            = try c.decodeIfPresent(PluginCategory.self, forKey: .category) ?? .unknown
+        manufacturer        = try c.decodeIfPresent(String.self,        forKey: .manufacturer)
         firstSeenAt         = try c.decode(Date.self,          forKey: .firstSeenAt)
         lastModifiedAt      = try c.decode(Date.self,          forKey: .lastModifiedAt)
         lastAccessedAt      = try c.decode(Date.self,          forKey: .lastAccessedAt)
@@ -36,13 +38,14 @@ struct Plugin: Codable, Identifiable {
     }
 
     init(id: UUID, path: String, name: String, format: PluginFormat, category: PluginCategory,
-         firstSeenAt: Date, lastModifiedAt: Date, lastAccessedAt: Date,
+         manufacturer: String?, firstSeenAt: Date, lastModifiedAt: Date, lastAccessedAt: Date,
          lastConfirmedUsedAt: Date?, isDismissed: Bool) {
         self.id                  = id
         self.path                = path
         self.name                = name
         self.format              = format
         self.category            = category
+        self.manufacturer        = manufacturer
         self.firstSeenAt         = firstSeenAt
         self.lastModifiedAt      = lastModifiedAt
         self.lastAccessedAt      = lastAccessedAt
@@ -57,6 +60,7 @@ struct ForgottenPlugin: Identifiable {
     let name: String
     let formats: [PluginFormat]     // sorted, all formats found for this name
     let category: PluginCategory
+    let manufacturer: String?
     let lastConfirmedUsedAt: Date?  // max across all enabled formats
 
     var daysSinceLastUse: Int? {

@@ -193,6 +193,12 @@ struct PluginRowView: View {
                 Text(plugin.name)
                     .font(.body)
                     .lineLimit(1)
+                if let manufacturer = plugin.manufacturer {
+                    Text(manufacturer)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
                 HStack(spacing: 5) {
                     ForEach(plugin.formats, id: \.self) { format in
                         Text(format.rawValue)

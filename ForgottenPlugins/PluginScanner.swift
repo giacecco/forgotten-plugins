@@ -12,6 +12,7 @@ struct ScannedPlugin {
     let path: String
     let format: PluginFormat
     let category: PluginCategory
+    let manufacturer: String?
     let atime: Date
     let mtime: Date
 }
@@ -50,10 +51,35 @@ enum PluginScanner {
                 let name = String(item.dropLast(spec.bundleExtension.count + 1))
                 guard let (atime, mtime) = readTimestamps(bundlePath: bundlePath, name: name) else { continue }
                 let category = readCategory(bundlePath: bundlePath, format: spec.format)
-                results.append(ScannedPlugin(name: name, path: bundlePath, format: spec.format, category: category, atime: atime, mtime: mtime))
+                let manufacturer = readManufacturer(bundlePath: bundlePath, format: spec.format)
+                results.append(ScannedPlugin(name: name, path: bundlePath, format: spec.format, category: category, manufacturer: manufacturer, atime: atime, mtime: mtime))
             }
         }
         return results
+    }
+
+    static func readManufacturer(bundlePath: String, format: PluginFormat) -> String? {
+        switch format {
+        case .au:
+            let plistPath = bundlePath + "/Contents/Info.plist"
+            guard
+                let plist = NSDictionary(contentsOfFile: plistPath),
+                let components = plist["AudioComponents"] as? [[String: Any]],
+                let fullName = components.first?["name"] as? String,
+                let colonRange = fullName.range(of: ":")
+            else { return nil }
+            return String(fullName[..<colonRange.lowerBound]).trimmingCharacters(in: .whitespaces)
+        case .vst3:
+            let jsonPath = bundlePath + "/Contents/moduleinfo.json"
+            guard
+                let data = try? Data(contentsOf: URL(fileURLWithPath: jsonPath)),
+                let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                let vendor = root["vendor"] as? String, !vendor.isEmpty
+            else { return nil }
+            return vendor
+        case .vst2, .clap, .aax:
+            return nil
+        }
     }
 
     static func readCategory(bundlePath: String, format: PluginFormat) -> PluginCategory {

@@ -2,7 +2,7 @@
 
 ## What this app does
 
-macOS menubar app that surfaces audio plugins the user owns but hasn't used in a long time (90+ days). Scans AU, CLAP, VST2, VST3, and AAX plugin directories. Uses filesystem **atime** (last-accessed timestamp) as a proxy for the last time a DAW loaded a plugin. No network requests, no DAW private data.
+macOS menubar app that surfaces audio plugins the user owns but hasn't recently used. Scans AU, CLAP, VST2, VST3, and AAX plugin directories. Uses filesystem **atime** (last-accessed timestamp) as a proxy for the last time a DAW loaded a plugin. No network requests, no DAW private data.
 
 ## Architecture
 

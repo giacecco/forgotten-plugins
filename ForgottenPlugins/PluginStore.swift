@@ -91,12 +91,8 @@ class PluginStore: ObservableObject {
             enabledCategories.contains($0.category)
         }
         let grouped = Dictionary(grouping: relevant) { $0.name.lowercased() }
-        return grouped.compactMap { key, group -> ForgottenPlugin? in
+        return grouped.map { key, group -> ForgottenPlugin in
             let maxUsed = group.compactMap(\.lastConfirmedUsedAt).max()
-            let days = maxUsed.map {
-                Calendar.current.dateComponents([.day], from: $0, to: Date()).day ?? 0
-            } ?? Int.max
-            guard days >= 90 else { return nil }
             let formats = Array(Set(group.map(\.format))).sorted { $0.rawValue < $1.rawValue }
             let category = group.first(where: { $0.category != .unknown })?.category ?? .unknown
             return ForgottenPlugin(

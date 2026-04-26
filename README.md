@@ -79,8 +79,46 @@ MIDI effects and analysers are folded into **Effect** in the shared taxonomy.
 
 Each plugin row has an **×** button that dismisses the plugin, hiding it from the list. Dismissal is not permanent: if you genuinely use the plugin again (i.e. a DAW loads it and atime advances past mtime by the required margin), it will automatically reappear the next time the list is refreshed.
 
-To restore all dismissed plugins at once without waiting for usage events, right-click the menubar icon and choose **Reset All Dismissals**.
+To restore all dismissed plugins at once without waiting for usage events, right-click the menubar icon and choose **Reset all ignored plugins**.
+
+## Manufacturer names
+
+Forgotten Plugins tries to identify who made each plugin:
+
+1. **AU** — reads the `AudioComponents[].name` field in `Contents/Info.plist` (the part before the first colon, e.g. `Native Instruments` from `Native Instruments: Massive X`).
+2. **VST3** — reads the `vendor` field in `Contents/moduleinfo.json` (present in plugins built with VST3 SDK 3.7+).
+3. **Cross-format propagation** — if one format of a plugin has a manufacturer, the name is copied to any other formats of the same plugin that are missing it.
+4. **Anthropic API** — any plugin still missing a manufacturer after the above steps is sent in a single batch request to Claude Haiku. This step is optional and requires an API key (see below).
+
+### Setting up the Anthropic API key (optional)
+
+Without an API key the app works fully — manufacturer lookup from bundle metadata still runs; only the AI batch step is skipped.
+
+To enable AI-assisted manufacturer lookup, provide your Anthropic API key in either of two ways:
+
+**Environment variable** (takes precedence):
+```
+export ANTHROPIC_API_KEY=sk-ant-...
+```
+
+**.env file** (read at launch):
+Create `~/Library/Application Support/ForgottenPlugins/.env` with the contents:
+```
+ANTHROPIC_API_KEY=sk-ant-...
+```
+
+## Clicking a plugin
+
+Clicking a plugin row opens a Google search for the plugin in your default browser. If the manufacturer is known, the search is `"Manufacturer" "Plugin Name"`; otherwise it falls back to `"Plugin Name" audio plugin`. This reliably surfaces the correct product page without risk of hallucinated or stale direct URLs.
+
+## Forgotten threshold
+
+The number of days without use before a plugin is considered forgotten. Default is 90 days. Adjust it in the settings panel (gear icon in the popover header).
+
+## Starts at login
+
+Forgotten Plugins registers itself as a login item on first launch using macOS's built-in login item API. You can remove it later via **System Settings → General → Login Items**.
 
 ## Privacy
 
-All data stays on your machine. No network requests are made.
+Plugin metadata and usage timestamps are stored locally at `~/Library/Application Support/ForgottenPlugins/plugins.json`. No data leaves your machine unless you have configured an Anthropic API key, in which case plugin names (not file paths or personal data) are sent to the Anthropic API solely for manufacturer lookup.

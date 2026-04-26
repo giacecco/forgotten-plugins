@@ -28,3 +28,7 @@ targets:
       PRODUCT_BUNDLE_IDENTIFIER: com.giacecco.ForgottenPlugins
       CODE_SIGN_STYLE: Automatic
       DEVELOPMENT_TEAM: ""
+    postBuildScripts:
+      - name: Install to /Applications
+        script: |
+          cp -R "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app" "/Applications/${PRODUCT_NAME}.app"

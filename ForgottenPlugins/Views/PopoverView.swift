@@ -214,7 +214,7 @@ struct PluginRowView: View {
                     .foregroundStyle(.tertiary)
             }
             .buttonStyle(.plain)
-            .help("Ignore this plugin")
+            .quickTooltip("Ignore this plugin")
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 9)
@@ -225,5 +225,45 @@ struct PluginRowView: View {
         if days == 0 { return "used today" }
         if days == 1 { return "1 day ago" }
         return "\(days) days ago"
+    }
+}
+
+private struct QuickTooltip: ViewModifier {
+    let text: String
+    @State private var hovered = false
+    @State private var visible = false
+
+    func body(content: Content) -> some View {
+        content
+            .onHover { over in
+                hovered = over
+                if over {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        if hovered { visible = true }
+                    }
+                } else {
+                    visible = false
+                }
+            }
+            .overlay(alignment: .bottomTrailing) {
+                if visible {
+                    Text(text)
+                        .font(.caption2)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .background(Color(NSColor.windowBackgroundColor))
+                        .foregroundStyle(Color(NSColor.labelColor))
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                        .fixedSize()
+                        .offset(y: 18)
+                        .zIndex(1)
+                }
+            }
+    }
+}
+
+private extension View {
+    func quickTooltip(_ text: String) -> some View {
+        modifier(QuickTooltip(text: text))
     }
 }

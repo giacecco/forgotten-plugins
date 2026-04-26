@@ -49,12 +49,12 @@ enum AnthropicClient {
     static func resolveProductURL(name: String, manufacturer: String?) async -> URL? {
         guard let apiKey = readAPIKey() else { return nil }
 
-        var prompt = "What is the official product page URL for the audio plugin \"\(name)\""
+        var prompt = "What is the most likely official product page URL for the audio plugin \"\(name)\""
         if let m = manufacturer { prompt += " by \(m)" }
-        prompt += "? Return only the URL as plain text, nothing else. If you are not certain return null."
+        prompt += "? Return only the URL as plain text, no explanation."
 
         let body: [String: Any] = [
-            "model": "claude-haiku-4-5-20251001",
+            "model": "claude-sonnet-4-6",
             "max_tokens": 256,
             "messages": [["role": "user", "content": prompt]]
         ]

@@ -30,12 +30,12 @@ class MenuBarController: NSObject {
         let size = NSSize(width: 26, height: 18)
         let noteRect = NSRect(x: 8, y: 2, width: 10, height: 14)
         // Halo rect is 2pt larger on every side to create the knockout gap
-        let haloRect = noteRect.insetBy(dx: -2, dy: -2)
+        let haloRect = noteRect.insetBy(dx: -4, dy: -4)
 
         let result = NSImage(size: size, flipped: false) { _ in
-            let brainCfg = NSImage.SymbolConfiguration(pointSize: 16, weight: .light)
+            let brainCfg = NSImage.SymbolConfiguration(pointSize: 16, weight: .regular)
             let haloCfg  = NSImage.SymbolConfiguration(pointSize: 15, weight: .black)
-            let noteCfg  = NSImage.SymbolConfiguration(pointSize: 13, weight: .medium)
+            let noteCfg  = NSImage.SymbolConfiguration(pointSize: 13, weight: .bold)
 
             // 1. Draw brain
             if let brain = NSImage(systemSymbolName: "brain", accessibilityDescription: nil)?

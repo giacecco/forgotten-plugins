@@ -192,35 +192,34 @@ struct PluginRowView: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text(plugin.name)
-                    .font(.body)
-                    .lineLimit(1)
-                if let manufacturer = plugin.manufacturer {
-                    Text(manufacturer)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+            Button(action: onTap) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(plugin.name)
+                        .font(.body)
                         .lineLimit(1)
-                }
-                HStack(spacing: 5) {
-                    ForEach(plugin.formats, id: \.self) { format in
-                        Text(format.rawValue)
-                            .font(.caption2)
-                            .padding(.horizontal, 5)
-                            .padding(.vertical, 1)
-                            .background(Color.accentColor.opacity(0.15))
-                            .clipShape(RoundedRectangle(cornerRadius: 3))
+                        .foregroundStyle(.primary)
+                    if let manufacturer = plugin.manufacturer {
+                        Text(manufacturer)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
                     }
-                    Text(lastUsedLabel)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 5) {
+                        ForEach(plugin.formats, id: \.self) { format in
+                            Text(format.rawValue)
+                                .font(.caption2)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 1)
+                                .background(Color.accentColor.opacity(0.15))
+                                .clipShape(RoundedRectangle(cornerRadius: 3))
+                        }
+                        Text(lastUsedLabel)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
-            .contentShape(Rectangle())
-            .onTapGesture { onTap() }
-            .onHover { over in
-                if over { NSCursor.pointingHand.push() } else { NSCursor.pop() }
-            }
+            .buttonStyle(.plain)
             Spacer()
             Button(action: onDismiss) {
                 Image(systemName: "xmark")

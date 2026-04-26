@@ -66,7 +66,7 @@ class MenuBarController: NSObject {
 
     private func showContextMenu() {
         let menu = NSMenu()
-        let reset = NSMenuItem(title: "Reset All Ignored Plugins", action: #selector(resetAllDismissals), keyEquivalent: "")
+        let reset = NSMenuItem(title: "Reset all ignored plugins", action: #selector(resetAllDismissals), keyEquivalent: "")
         reset.target = self
         menu.addItem(reset)
         menu.addItem(.separator())

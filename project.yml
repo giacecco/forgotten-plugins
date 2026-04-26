@@ -1,0 +1,30 @@
+name: ForgottenPlugins
+options:
+  bundleIdPrefix: com.giacecco
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "13.0"
+targets:
+  ForgottenPlugins:
+    type: application
+    platform: macOS
+    deploymentTarget: "13.0"
+    sources:
+      - path: ForgottenPlugins
+    info:
+      path: ForgottenPlugins/Info.plist
+      properties:
+        LSUIElement: true
+        CFBundleDisplayName: Forgotten Plugins
+        CFBundleShortVersionString: "0.1.0"
+        NSHumanReadableCopyright: "© 2026 Giacomo Cecio"
+    entitlements:
+      path: ForgottenPlugins/ForgottenPlugins.entitlements
+      properties:
+        com.apple.security.app-sandbox: false
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.giacecco.ForgottenPlugins
+      CODE_SIGN_STYLE: Automatic
+      DEVELOPMENT_TEAM: ""

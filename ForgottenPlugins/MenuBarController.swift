@@ -19,7 +19,7 @@ class MenuBarController: NSObject {
     private func setupStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         guard let button = statusItem.button else { return }
-        button.image = NSImage(systemSymbolName: "headphones", accessibilityDescription: "Forgotten Plugins")
+        button.image = NSImage(systemSymbolName: "brain", accessibilityDescription: "Forgotten Plugins")
         button.action = #selector(handleClick)
         button.target = self
         button.sendAction(on: [.leftMouseUp, .rightMouseDown])
@@ -66,7 +66,7 @@ class MenuBarController: NSObject {
 
     private func showContextMenu() {
         let menu = NSMenu()
-        let reset = NSMenuItem(title: "Reset All Dismissals", action: #selector(resetAllDismissals), keyEquivalent: "")
+        let reset = NSMenuItem(title: "Reset All Ignored Plugins", action: #selector(resetAllDismissals), keyEquivalent: "")
         reset.target = self
         menu.addItem(reset)
         menu.addItem(.separator())

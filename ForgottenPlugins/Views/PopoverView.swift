@@ -188,7 +188,7 @@ struct PluginRowView: View {
                     .foregroundStyle(.tertiary)
             }
             .buttonStyle(.plain)
-            .help("Dismiss")
+            .help("Ignore this plugin")
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 9)

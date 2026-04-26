@@ -38,7 +38,7 @@ class MenuBarController: NSObject {
             let noteCfg  = NSImage.SymbolConfiguration(pointSize: 13, weight: .bold)
 
             // 1. Draw brain
-            if let brain = NSImage(systemSymbolName: "brain", accessibilityDescription: nil)?
+            if let brain = NSImage(systemSymbolName: "brain.fill", accessibilityDescription: nil)?
                     .withSymbolConfiguration(brainCfg) {
                 brain.draw(in: NSRect(x: 0, y: 1, width: 26, height: 16))
             }

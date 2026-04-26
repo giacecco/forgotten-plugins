@@ -28,19 +28,29 @@ class MenuBarController: NSObject {
 
     private func makeMenuBarIcon() -> NSImage {
         let size = NSSize(width: 26, height: 18)
+        let noteRect = NSRect(x: 8, y: 2, width: 10, height: 14)
+        // Halo rect is 2pt larger on every side to create the knockout gap
+        let haloRect = noteRect.insetBy(dx: -2, dy: -2)
+
         let result = NSImage(size: size, flipped: false) { _ in
-            // Brain as a thin outline so the note on top remains distinct
-            let brainCfg = NSImage.SymbolConfiguration(pointSize: 16, weight: .ultraLight)
-            // Note at medium weight so it reads as a solid shape over the brain
+            let brainCfg = NSImage.SymbolConfiguration(pointSize: 16, weight: .light)
+            let haloCfg  = NSImage.SymbolConfiguration(pointSize: 15, weight: .black)
             let noteCfg  = NSImage.SymbolConfiguration(pointSize: 13, weight: .medium)
+
+            // 1. Draw brain
             if let brain = NSImage(systemSymbolName: "brain", accessibilityDescription: nil)?
                     .withSymbolConfiguration(brainCfg) {
                 brain.draw(in: NSRect(x: 0, y: 1, width: 26, height: 16))
             }
+            // 2. Punch the note's silhouette (slightly enlarged) out of the brain
+            if let halo = NSImage(systemSymbolName: "music.note", accessibilityDescription: nil)?
+                    .withSymbolConfiguration(haloCfg) {
+                halo.draw(in: haloRect, from: .zero, operation: .destinationOut, fraction: 1)
+            }
+            // 3. Draw the actual note on top
             if let note = NSImage(systemSymbolName: "music.note", accessibilityDescription: nil)?
                     .withSymbolConfiguration(noteCfg) {
-                // Centre the note over the brain
-                note.draw(in: NSRect(x: 8, y: 2, width: 10, height: 14))
+                note.draw(in: noteRect, from: .zero, operation: .sourceOver, fraction: 1)
             }
             return true
         }

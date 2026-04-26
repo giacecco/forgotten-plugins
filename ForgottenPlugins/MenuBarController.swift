@@ -29,8 +29,10 @@ class MenuBarController: NSObject {
     private func makeMenuBarIcon() -> NSImage {
         let size = NSSize(width: 26, height: 18)
         let noteRect = NSRect(x: 8, y: 2, width: 10, height: 14)
-        // Halo rect is 2pt larger on every side to create the knockout gap
-        let haloRect = noteRect.insetBy(dx: -7, dy: -7)
+        // Asymmetric halo: music.note glyph sits towards the right of its bounds,
+        // so expand more on the right to get an even gap all around the note.
+        let haloRect = NSRect(x: noteRect.minX - 7, y: noteRect.minY - 7,
+                              width: noteRect.width + 7 + 12, height: noteRect.height + 14)
 
         let result = NSImage(size: size, flipped: false) { _ in
             let brainCfg = NSImage.SymbolConfiguration(pointSize: 16, weight: .regular)

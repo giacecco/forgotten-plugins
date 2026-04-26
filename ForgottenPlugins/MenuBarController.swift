@@ -19,11 +19,30 @@ class MenuBarController: NSObject {
     private func setupStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         guard let button = statusItem.button else { return }
-        button.image = NSImage(systemSymbolName: "brain", accessibilityDescription: "Forgotten Plugins")
+        button.image = makeMenuBarIcon()
         button.action = #selector(handleClick)
         button.target = self
         button.sendAction(on: [.leftMouseUp, .rightMouseDown])
         addHoverTracking(to: button)
+    }
+
+    private func makeMenuBarIcon() -> NSImage {
+        let size = NSSize(width: 22, height: 16)
+        let result = NSImage(size: size, flipped: false) { _ in
+            let brainCfg = NSImage.SymbolConfiguration(pointSize: 12, weight: .light)
+            let noteCfg  = NSImage.SymbolConfiguration(pointSize: 7,  weight: .semibold)
+            if let brain = NSImage(systemSymbolName: "brain", accessibilityDescription: nil)?
+                    .withSymbolConfiguration(brainCfg) {
+                brain.draw(in: NSRect(x: 0, y: 1, width: 16, height: 14))
+            }
+            if let note = NSImage(systemSymbolName: "music.note", accessibilityDescription: nil)?
+                    .withSymbolConfiguration(noteCfg) {
+                note.draw(in: NSRect(x: 14, y: 9, width: 8, height: 7))
+            }
+            return true
+        }
+        result.isTemplate = true
+        return result
     }
 
     private func addHoverTracking(to button: NSStatusBarButton) {

@@ -95,7 +95,8 @@ enum AnthropicClient {
 
     private static func parseEnvKey(_ key: String, from contents: String) -> String? {
         for line in contents.components(separatedBy: .newlines) {
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            // Strip any surrounding quotes wrapping the whole line
+            let trimmed = line.trimmingCharacters(in: .init(charactersIn: "\"' \t"))
             guard trimmed.hasPrefix(key + "=") else { continue }
             let value = String(trimmed.dropFirst(key.count + 1))
                 .trimmingCharacters(in: .init(charactersIn: "\"' "))

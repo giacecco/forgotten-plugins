@@ -25,8 +25,15 @@ struct PopoverView: View {
 
     private var header: some View {
         HStack {
-            Text("Forgotten Plugins")
-                .font(.headline)
+            VStack(alignment: .leading, spacing: 1) {
+                Text("Forgotten Plugins")
+                    .font(.headline)
+                if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                    Text("v\(version)")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
+            }
             Spacer()
             if !visibleForgottenPlugins.isEmpty {
                 Text("\(visibleForgottenPlugins.count)")
